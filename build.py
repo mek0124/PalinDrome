@@ -11,6 +11,7 @@ import subprocess
 import shutil
 import site
 import sysconfig
+import importlib.util
 
 def main():
     print("Building PalindromeChecker application...")
@@ -52,7 +53,6 @@ def main():
         subprocess.run([venv_python, '-m', 'pip', 'install', 'pyinstaller', 'PySide6==6.9.0'])
 
         # Copy main_window.py to the app directory to ensure it can be found
-        import shutil
         try:
             shutil.copy('src/app/main_window.py', 'src/main_window.py')
             print("Copied main_window.py to src directory for better import compatibility")
@@ -82,7 +82,6 @@ def main():
         ]
     else:
         # Copy main_window.py to the app directory to ensure it can be found
-        import shutil
         try:
             shutil.copy('src/app/main_window.py', 'src/main_window.py')
             print("Copied main_window.py to src directory for better import compatibility")
