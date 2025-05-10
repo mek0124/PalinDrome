@@ -51,6 +51,14 @@ def main():
         subprocess.run([venv_python, '-m', 'pip', 'install', '--upgrade', 'pip'])
         subprocess.run([venv_python, '-m', 'pip', 'install', 'pyinstaller', 'PySide6==6.9.0'])
 
+        # Copy main_window.py to the app directory to ensure it can be found
+        import shutil
+        try:
+            shutil.copy('src/app/main_window.py', 'src/main_window.py')
+            print("Copied main_window.py to src directory for better import compatibility")
+        except Exception as e:
+            print(f"Warning: Could not copy main_window.py: {e}")
+
         # Build command for venv
         cmd = [
             venv_python, '-m', 'PyInstaller',
@@ -59,9 +67,12 @@ def main():
             '--windowed',
             '--name=PalindromeChecker',
             '--add-data=src/main_window.ui:src',
+            '--add-data=src/app/main_window.py:src/app',
             '--hidden-import=PySide6.QtCore',
             '--hidden-import=PySide6.QtGui',
             '--hidden-import=PySide6.QtWidgets',
+            '--hidden-import=src.app.main_window',
+            '--hidden-import=src.main_window',
             # Exclude problematic modules
             '--exclude-module=PySide6.QtNetwork',
             '--exclude-module=PySide6.QtWebEngineCore',
@@ -70,6 +81,14 @@ def main():
             'src/app/main.py'
         ]
     else:
+        # Copy main_window.py to the app directory to ensure it can be found
+        import shutil
+        try:
+            shutil.copy('src/app/main_window.py', 'src/main_window.py')
+            print("Copied main_window.py to src directory for better import compatibility")
+        except Exception as e:
+            print(f"Warning: Could not copy main_window.py: {e}")
+
         # Standard build command
         cmd = [
             'pyinstaller',
@@ -78,9 +97,12 @@ def main():
             '--windowed',
             '--name=PalindromeChecker',
             '--add-data=src/main_window.ui:src',
+            '--add-data=src/app/main_window.py:src/app',
             '--hidden-import=PySide6.QtCore',
             '--hidden-import=PySide6.QtGui',
             '--hidden-import=PySide6.QtWidgets',
+            '--hidden-import=src.app.main_window',
+            '--hidden-import=src.main_window',
             # Exclude problematic modules
             '--exclude-module=PySide6.QtNetwork',
             '--exclude-module=PySide6.QtWebEngineCore',
@@ -91,8 +113,10 @@ def main():
 
     # Adjust command for Windows if needed
     if sys.platform.startswith('win'):
-        data_index = cmd.index('--add-data=src/main_window.ui:src')
-        cmd[data_index] = '--add-data=src/main_window.ui;src'
+        # Replace all data paths with Windows-style paths
+        for i, arg in enumerate(cmd):
+            if arg.startswith('--add-data='):
+                cmd[i] = arg.replace(':', ';')
 
     print("Running PyInstaller with command:", ' '.join(cmd))
 
