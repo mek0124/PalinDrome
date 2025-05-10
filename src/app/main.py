@@ -1,5 +1,5 @@
 from PySide6 import QtWidgets as qtw
-from src.app.main_window import Ui_MainWindow
+from src.main_window import Ui_MainWindow
 import sys
 
 
@@ -9,6 +9,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
 
         self.setupUi(self)
         self.setWindowTitle("Palindrome Checker")
+        self.setStyleSheet("background: linear-gradient(145deg, rgb(254,144,173), rgb(254,85,140), rgb(254,85,140));")
         self.setMinimumWidth(800)
         self.setMinimumHeight(600)
 
