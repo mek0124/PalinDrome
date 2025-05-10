@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "palindrome_checker"
+version = "0.1.0"
+authors = [{name = "mek0124", email = "mek0124@proton.me"}]
+description = "A simple palindrome checker application"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.scripts]
+palindrome-checker = "palindrome_checker.main:main"
