@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "palindrome_checker"
-version = "1.0.0"
+version = "1.1.1"
 authors = [{name = "mek0124", email = "mek0124@proton.me"}]
 description = "A simple palindrome checker application"
 readme = "README.md"
