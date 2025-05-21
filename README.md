@@ -21,6 +21,8 @@ A simple desktop application for checking if your word or phrase is the same spe
     bash run.sh
     ```
 
+    - This script is setup to convert all .ui files found in src/ to .py files before packaging.
+
     - This script is setup to automatically check for the `dist` and `build` folders for the project. If they do not exist, it will build the application down and launch it for you.
 
 ## Updating
