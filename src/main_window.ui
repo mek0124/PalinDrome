@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>519</width>
-    <height>504</height>
+    <width>543</width>
+    <height>482</height>
    </rect>
   </property>
   <property name="font">
    <font>
-    <pointsize>14</pointsize>
+    <pointsize>20</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -45,8 +45,8 @@
        <string/>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="1" column="0" colspan="2">
-        <spacer name="verticalSpacer">
+       <item row="3" column="0" colspan="2">
+        <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Orientation::Vertical</enum>
          </property>
@@ -78,19 +78,6 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0" colspan="2">
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Orientation::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="2" column="0" colspan="2">
         <widget class="QGroupBox" name="groupBox_2">
          <property name="title">
@@ -99,6 +86,11 @@
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="1" column="1">
            <widget class="QLineEdit" name="le_WordToCheck">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
             <property name="alignment">
              <set>Qt::AlignmentFlag::AlignCenter</set>
             </property>
@@ -129,25 +121,46 @@
              <set>Qt::AlignmentFlag::AlignCenter</set>
             </property>
             <layout class="QGridLayout" name="gridLayout_4">
-             <item row="1" column="2">
-              <widget class="QLineEdit" name="le_WordBackwards"/>
-             </item>
-             <item row="2" column="2">
-              <widget class="QLabel" name="le_ResultLabel">
-               <property name="text">
-                <string>TextLabel</string>
-               </property>
-              </widget>
-             </item>
              <item row="2" column="0">
               <widget class="QLabel" name="label_5">
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string>Palindrome?</string>
                </property>
               </widget>
              </item>
+             <item row="0" column="2">
+              <widget class="QLineEdit" name="le_OriginalWord">
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="2">
+              <widget class="QLabel" name="le_ResultLabel">
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>TextLabel</string>
+               </property>
+              </widget>
+             </item>
              <item row="0" column="0">
               <widget class="QLabel" name="label_3">
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string>Original Word:</string>
                </property>
@@ -155,13 +168,24 @@
              </item>
              <item row="1" column="0">
               <widget class="QLabel" name="label_4">
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string>Backwards:</string>
                </property>
               </widget>
              </item>
-             <item row="0" column="2">
-              <widget class="QLineEdit" name="le_OriginalWord"/>
+             <item row="1" column="2">
+              <widget class="QLineEdit" name="le_WordBackwards">
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+              </widget>
              </item>
              <item row="0" column="1" rowspan="3">
               <spacer name="horizontalSpacer_3">
@@ -182,8 +206,26 @@
          </layout>
         </widget>
        </item>
+       <item row="1" column="0" colspan="2">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
        <item row="4" column="0">
         <widget class="QPushButton" name="pb_Cancel">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Exit</string>
          </property>
@@ -191,15 +233,13 @@
        </item>
        <item row="4" column="1">
         <widget class="QPushButton" name="pb_Check">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Check</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0" colspan="2">
-        <widget class="QPushButton" name="pushButton">
-         <property name="text">
-          <string>PushButton</string>
          </property>
         </widget>
        </item>

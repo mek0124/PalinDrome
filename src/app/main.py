@@ -1,9 +1,7 @@
 from PySide6 import QtWidgets as qtw
-from ui.main_window import Ui_MainWindow
+from src.main_window import Ui_MainWindow
 
 import sys
-import os
-import importlib.util
 
 
 class MainWindow(qtw.QMainWindow, Ui_MainWindow):
