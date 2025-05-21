@@ -9,12 +9,9 @@ import os
 import sys
 import subprocess
 import shutil
-import site
-import sysconfig
-import importlib.util
 
 def main():
-    print("Building PalindromeChecker application...")
+    print("Building PalinDrome application...")
 
     # Clean previous builds
     if os.path.exists('dist'):
@@ -52,26 +49,19 @@ def main():
         subprocess.run([venv_python, '-m', 'pip', 'install', '--upgrade', 'pip'])
         subprocess.run([venv_python, '-m', 'pip', 'install', 'pyinstaller', 'PySide6==6.9.0'])
 
-        # Copy main_window.py to the app directory to ensure it can be found
-        try:
-            shutil.copy('src/app/main_window.py', 'src/main_window.py')
-            print("Copied main_window.py to src directory for better import compatibility")
-        except Exception as e:
-            print(f"Warning: Could not copy main_window.py: {e}")
-
         # Build command for venv
         cmd = [
             venv_python, '-m', 'PyInstaller',
             '--clean',
             '--noconfirm',
             '--windowed',
-            '--name=PalindromeChecker',
+            '--name=PalinDrome',
             '--add-data=src/main_window.ui:src',
-            '--add-data=src/app/main_window.py:src/app',
+            '--add-data=src/app/main.py:src/app',
             '--hidden-import=PySide6.QtCore',
             '--hidden-import=PySide6.QtGui',
             '--hidden-import=PySide6.QtWidgets',
-            '--hidden-import=src.app.main_window',
+            '--hidden-import=src.app.main',
             '--hidden-import=src.main_window',
             # Exclude problematic modules
             '--exclude-module=PySide6.QtNetwork',
@@ -81,26 +71,19 @@ def main():
             'src/app/main.py'
         ]
     else:
-        # Copy main_window.py to the app directory to ensure it can be found
-        try:
-            shutil.copy('src/app/main_window.py', 'src/main_window.py')
-            print("Copied main_window.py to src directory for better import compatibility")
-        except Exception as e:
-            print(f"Warning: Could not copy main_window.py: {e}")
-
         # Standard build command
         cmd = [
             'pyinstaller',
             '--clean',
             '--noconfirm',
             '--windowed',
-            '--name=PalindromeChecker',
+            '--name=PalinDrome',
             '--add-data=src/main_window.ui:src',
-            '--add-data=src/app/main_window.py:src/app',
+            '--add-data=src/app/main.py:src/app',
             '--hidden-import=PySide6.QtCore',
             '--hidden-import=PySide6.QtGui',
             '--hidden-import=PySide6.QtWidgets',
-            '--hidden-import=src.app.main_window',
+            '--hidden-import=src.app.main',
             '--hidden-import=src.main_window',
             # Exclude problematic modules
             '--exclude-module=PySide6.QtNetwork',
@@ -124,7 +107,7 @@ def main():
 
     if result.returncode == 0:
         print("Build completed successfully!")
-        print(f"Executable can be found in {os.path.abspath('dist/PalindromeChecker')}")
+        print(f"Executable can be found in {os.path.abspath('dist/PalinDrome')}")
 
         # Clean up venv if created
         if in_conda and os.path.exists(venv_dir):
