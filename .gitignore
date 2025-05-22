@@ -1,9 +1,6 @@
-__pycache__/
-**/*/__pycache__/
-.aidigestignore
-check.md
+.venv/
+build
+dist
 codebase.md
-error.txt
-PalindromeChecker.spec
-[Dd]ist/
-[Bb]uild/
+*.tar.gz
+PalinDrome.spec
