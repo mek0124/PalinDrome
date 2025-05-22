@@ -1,123 +1,125 @@
 #!/usr/bin/env python3
 """
-Build script for PalindromeChecker application
-This script handles the PyInstaller build process with proper configuration
-to avoid OpenSSL and Kerberos-related issues.
+Build script that creates standalone executables for all platforms.
+Generates executables for the current platform and warns about others.
 """
-
 import os
 import sys
+import platform
 import subprocess
 import shutil
+import tarfile
+from pathlib import Path
 
-def main():
-    print("Building PalinDrome application...")
+def build_for_current_platform():
+    current_system = platform.system()
+    print(f"Building for current platform: {current_system}")
 
     # Clean previous builds
-    if os.path.exists('dist'):
-        print("Cleaning previous build...")
-        shutil.rmtree('dist')
-    if os.path.exists('build'):
-        shutil.rmtree('build')
+    for folder in ['dist', 'build']:
+        if os.path.exists(folder):
+            shutil.rmtree(folder)
 
-    # Set environment variables to avoid OpenSSL issues
-    env = os.environ.copy()
-    env['PYTHONOPTIMIZE'] = '1'
+    # Platform-specific configurations
+    is_windows = current_system == "Windows"
+    is_mac = current_system == "Darwin"
+    is_linux = current_system == "Linux"
 
-    # Check if running in Anaconda environment
-    in_conda = os.path.exists(os.path.join(sys.prefix, 'conda-meta'))
-    if in_conda:
-        print("Detected Anaconda environment. Using alternative build approach...")
+    # Base PyInstaller command
+    cmd = [
+        sys.executable, '-m', 'PyInstaller',
+        '--clean',
+        '--noconfirm',
+        '--windowed',
+        '--name=PalinDrome',
+        '--add-data=src/main_window.ui:src',
+        '--add-data=app-icon.jpeg:.',
+        '--icon=app.ico',
+        '--hidden-import=PySide6.QtCore',
+        '--hidden-import=PySide6.QtGui',
+        '--hidden-import=PySide6.QtWidgets',
+        'src/app/main.py'
+    ]
 
-        # Create a virtual environment for building
-        print("Creating a temporary virtual environment for building...")
-        venv_dir = os.path.abspath('.build_venv')
-        if os.path.exists(venv_dir):
-            shutil.rmtree(venv_dir)
-
-        # Create venv
-        subprocess.run([sys.executable, '-m', 'venv', venv_dir])
-
-        # Get the Python executable in the venv
-        if sys.platform.startswith('win'):
-            venv_python = os.path.join(venv_dir, 'Scripts', 'python.exe')
-        else:
-            venv_python = os.path.join(venv_dir, 'bin', 'python')
-
-        # Install required packages in the venv
-        print("Installing required packages in the virtual environment...")
-        subprocess.run([venv_python, '-m', 'pip', 'install', '--upgrade', 'pip'])
-        subprocess.run([venv_python, '-m', 'pip', 'install', 'pyinstaller', 'PySide6==6.9.0'])
-
-        # Build command for venv
-        cmd = [
-            venv_python, '-m', 'PyInstaller',
-            '--clean',
-            '--noconfirm',
-            '--windowed',
-            '--name=PalinDrome',
-            '--add-data=src/main_window.ui:src',
-            '--add-data=src/app/main.py:src/app',
-            '--hidden-import=PySide6.QtCore',
-            '--hidden-import=PySide6.QtGui',
-            '--hidden-import=PySide6.QtWidgets',
-            '--hidden-import=src.app.main',
-            '--hidden-import=src.main_window',
-            # Exclude problematic modules
-            '--exclude-module=PySide6.QtNetwork',
-            '--exclude-module=PySide6.QtWebEngineCore',
-            '--exclude-module=PySide6.QtWebEngine',
-            '--exclude-module=PySide6.QtWebEngineWidgets',
-            'src/app/main.py'
-        ]
-    else:
-        # Standard build command
-        cmd = [
-            'pyinstaller',
-            '--clean',
-            '--noconfirm',
-            '--windowed',
-            '--name=PalinDrome',
-            '--add-data=src/main_window.ui:src',
-            '--add-data=src/app/main.py:src/app',
-            '--hidden-import=PySide6.QtCore',
-            '--hidden-import=PySide6.QtGui',
-            '--hidden-import=PySide6.QtWidgets',
-            '--hidden-import=src.app.main',
-            '--hidden-import=src.main_window',
-            # Exclude problematic modules
-            '--exclude-module=PySide6.QtNetwork',
-            '--exclude-module=PySide6.QtWebEngineCore',
-            '--exclude-module=PySide6.QtWebEngine',
-            '--exclude-module=PySide6.QtWebEngineWidgets',
-            'src/app/main.py'
-        ]
-
-    # Adjust command for Windows if needed
-    if sys.platform.startswith('win'):
-        # Replace all data paths with Windows-style paths
+    if is_windows:
+        cmd.extend(['--onefile', '--noconsole'])
+        # Windows needs semicolons in add-data
         for i, arg in enumerate(cmd):
             if arg.startswith('--add-data='):
                 cmd[i] = arg.replace(':', ';')
-
-    print("Running PyInstaller with command:", ' '.join(cmd))
+    elif is_mac:
+        cmd.extend([
+            '--osx-bundle-identifier=com.yourcompany.palindrome',
+            '--windowed'  # Proper .app bundle
+        ])
+    else:  # Linux
+        cmd.extend(['--onefile'])
 
     # Run PyInstaller
-    result = subprocess.run(cmd, env=env)
+    subprocess.run(cmd, check=True)
 
-    if result.returncode == 0:
-        print("Build completed successfully!")
-        print(f"Executable can be found in {os.path.abspath('dist/PalinDrome')}")
-
-        # Clean up venv if created
-        if in_conda and os.path.exists(venv_dir):
-            print("Cleaning up temporary virtual environment...")
-            shutil.rmtree(venv_dir)
+    # Package the output
+    if is_windows:
+        package_windows()
+    elif is_mac:
+        package_mac()
     else:
-        print("Build failed with error code:", result.returncode)
-        return 1
+        package_linux()
 
-    return 0
+    # Warn about other platforms
+    other_platforms = {
+        "Windows": is_windows,
+        "macOS": is_mac,
+        "Linux": is_linux
+    }
+    print("\nNote about cross-platform building:")
+    for platform_name, is_current in other_platforms.items():
+        if not is_current:
+            print(f"- {platform_name} builds must be created on a {platform_name} system")
+
+def package_windows():
+    """Package Windows .exe into a zip"""
+    exe_path = Path('dist') / 'PalinDrome.exe'
+    if exe_path.exists():
+        shutil.make_archive('PalinDrome-Windows', 'zip', 'dist')
+        print("Created PalinDrome-Windows.zip")
+
+def package_mac():
+    """Package Mac .app into a zip"""
+    app_path = Path('dist') / 'PalinDrome.app'
+    if app_path.exists():
+        # Create a simple command script
+        with open('dist/Run_PalinDrome.command', 'w') as f:
+            f.write("#!/bin/sh\n")
+            f.write(f'open "{app_path}"\n')
+        os.chmod('dist/Run_PalinDrome.command', 0o755)
+        
+        # Zip both the app and the command script
+        shutil.make_archive('PalinDrome-macOS', 'zip', 'dist')
+        print("Created PalinDrome-macOS.zip")
+
+def package_linux():
+    """Package Linux executable into a tar.gz"""
+    bin_path = Path('dist') / 'PalinDrome'
+    if bin_path.exists():
+        # Create a simple run script
+        with open('dist/run_palindrome.sh', 'w') as f:
+            f.write("#!/bin/sh\n")
+            f.write(f'DIR="$( cd "$( dirname "$0" )" && pwd )"\n')
+            f.write('"$DIR/PalinDrome" "$@"\n')
+        os.chmod('dist/run_palindrome.sh', 0o755)
+        
+        # Create tar.gz
+        with tarfile.open('PalinDrome-Linux.tar.gz', 'w:gz') as tar:
+            tar.add('dist/PalinDrome', arcname='PalinDrome')
+            tar.add('dist/run_palindrome.sh', arcname='run_palindrome.sh')
+        print("Created PalinDrome-Linux.tar.gz")
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        import tarfile
+    except ImportError:
+        print("Error: tarfile module not found")
+        sys.exit(1)
+        
+    build_for_current_platform()
