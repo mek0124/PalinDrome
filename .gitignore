@@ -4,3 +4,5 @@ dist
 codebase.md
 *.tar.gz
 PalinDrome.spec
+__pycache__/
+PalinDrome-Windows.zip
